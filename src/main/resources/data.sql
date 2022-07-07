@@ -1,5 +1,7 @@
+-- Club Table (List of all the Clubs) --
 CREATE TABLE IF NOT EXISTS club (
     club_id UUID NOT NULL PRIMARY KEY,
+    id_number VARCHAR(200) NOT NULL,
     username VARCHAR(200) NOT NULL,
     encoded_password VARCHAR(200) NOT NULL,
     name VARCHAR(200) NOT NULL,
@@ -7,6 +9,7 @@ CREATE TABLE IF NOT EXISTS club (
     profile_picture_url VARCHAR(200)
 );
 
+-- Social Media Links (Club Instagram, Discord, Classroom, etc. links) --
 CREATE TABLE IF NOT EXISTS socials (
     social_id UUID NOT NULL PRIMARY KEY,
     club_id UUID NOT NULL,
@@ -15,6 +18,7 @@ CREATE TABLE IF NOT EXISTS socials (
     FOREIGN KEY (social_id) REFERENCES club(club_id)
 );
 
+-- Club Tags --
 CREATE TABLE IF NOT EXISTS club_categories (
     id UUID NOT NULL PRIMARY KEY,
     club_id UUID NOT NULL,
@@ -22,6 +26,7 @@ CREATE TABLE IF NOT EXISTS club_categories (
     FOREIGN KEY (club_id) REFERENCES club(club_id)
 );
 
+-- Posts List --
 CREATE TABLE IF NOT EXISTS post (
     post_id UUID NOT NULL PRIMARY KEY,
     sender UUID NOT NULL,
@@ -29,6 +34,7 @@ CREATE TABLE IF NOT EXISTS post (
     FOREIGN KEY (sender) REFERENCES club(club_id)
 );
 
+-- Post Tabs --
 CREATE TABLE IF NOT EXISTS post_tab (
     tab_id UUID NOT NULL PRIMARY KEY,
     post_id UUID NOT NULL,
@@ -38,6 +44,7 @@ CREATE TABLE IF NOT EXISTS post_tab (
     FOREIGN KEY (post_id) REFERENCES post(post_id)
 );
 
+-- Featured Clubs --
 CREATE TABLE IF NOT EXISTS featured_clubs (
     club_id UUID NOT NULL PRIMARY KEY,
     text_content VARCHAR(500),
