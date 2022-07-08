@@ -1,5 +1,4 @@
 package com.codingoutreach.clubservice.repository.DTO;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
