@@ -27,11 +27,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                    .antMatchers("/**")
+                    .antMatchers("/") // TODO: Figure out the page club leaders will use to edit their information
                     .permitAll()
                 .anyRequest()
                 .authenticated().and()
-                .formLogin();
+                .formLogin(); // TODO: Delete this and replace with JWT
     }
 
     @Override

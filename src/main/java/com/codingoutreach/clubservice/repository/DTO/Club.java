@@ -17,7 +17,7 @@ public class Club {
     private final UUID clubID;
 
     @NotBlank
-    private String username;
+    private String email;
 
     @NotBlank
     private String encoded_password;
@@ -27,6 +27,9 @@ public class Club {
 
     @NotBlank
     private String description;
+
+    @NotBlank
+    private String meet_time;
 
     @NotBlank
     private String profile_picture_url;

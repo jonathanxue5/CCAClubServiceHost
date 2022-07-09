@@ -1,11 +1,11 @@
 -- Club Table (List of all the Clubs) --
 CREATE TABLE IF NOT EXISTS club (
     club_id UUID NOT NULL PRIMARY KEY,
-    id_number VARCHAR(200) NOT NULL,
-    username VARCHAR(200) NOT NULL,
+    email VARCHAR(200) NOT NULL,
     encoded_password VARCHAR(200) NOT NULL,
     name VARCHAR(200) NOT NULL,
     description VARCHAR(500) NOT NULL,
+    meet_time VARCHAR(500) NOT NULL,
     profile_picture_url VARCHAR(200)
 );
 
@@ -50,4 +50,12 @@ CREATE TABLE IF NOT EXISTS featured_clubs (
     text_content VARCHAR(500),
     media_url VARCHAR(200),
     FOREIGN KEY (club_id) REFERENCES club(club_id)
+);
+
+CREATE TABLE IF NOT EXISTS users (
+    user_id UUID NOT NULL PRIMARY KEY,
+    user_email VARCHAR(200) NOT NULL,
+    username VARCHAR(200) NOT NULL,
+    encoded_password VARCHAR(200) NOT NULL,
+    user_role VARCHAR(200) NOT NULL
 );

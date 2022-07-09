@@ -1,6 +1,6 @@
 package com.codingoutreach.clubservice.controllers;
 
-import com.codingoutreach.clubservice.request.RegistrationRequest;
+import com.codingoutreach.clubservice.controllers.DO.ClubCreationRequest;
 import com.codingoutreach.clubservice.service.RegistrationService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,7 +17,7 @@ public class RegistrationController {
 
 
     @PostMapping
-    public String register (@RequestBody RegistrationRequest request) {
+    public String register (@RequestBody ClubCreationRequest request) {
         return registrationService.register(request);
     }
 }
