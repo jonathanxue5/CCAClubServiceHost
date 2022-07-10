@@ -14,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.Null;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -21,21 +22,25 @@ import java.util.UUID;
 public class AppUserService implements UserDetailsService {
 
     private final static String USER_NOT_FOUND_MSG = "user with email %s not found";
+    private final static String TOO_MANY_USERS_MSG = "too many users associated with email %s";
     private final ClubRepository clubRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        ClubUser club = clubRepository.findByEmail(email);
-        if (club == null) {
+        List<ClubUser> club = clubRepository.findByEmail(email);
+        if (club.size() == 0) {
             throw new UsernameNotFoundException(String.format(USER_NOT_FOUND_MSG, email));
+        } else if (club.size() != 1) {
+            throw new UsernameNotFoundException(String.format(TOO_MANY_USERS_MSG, email));
         }
-        return club;
+
+        return club.get(0);
     }
 
     public String signUpUser(ClubCreationRequest clubCreationRequest) {
-        boolean userExists = clubRepository.findByEmail(clubCreationRequest.getEmail()) != null;
+        boolean userExists = (clubRepository.findByEmail(clubCreationRequest.getEmail()).size() != 0);
 
         if (userExists) {
             throw new IllegalStateException("Email already taken");
@@ -46,7 +51,7 @@ public class AppUserService implements UserDetailsService {
         UUID club_id = UUID.randomUUID();
 
         Club clubNew = new Club(club_id, clubCreationRequest.getEmail(), encodedPassword, clubCreationRequest.getName(),
-                                clubCreationRequest.getDescription(), clubCreationRequest.getMeet_time(), null);
+                                clubCreationRequest.getDescription(), clubCreationRequest.getMeet_time(), "templink");
         clubRepository.createNewClub(clubNew);
 
         return "Works";

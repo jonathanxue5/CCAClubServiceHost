@@ -27,7 +27,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                    .antMatchers("/") // TODO: Figure out the page club leaders will use to edit their information
+                    .antMatchers("/**") // TODO: Figure out the page club leaders will use to edit their information
                     .permitAll()
                 .anyRequest()
                 .authenticated().and()

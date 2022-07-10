@@ -4,8 +4,8 @@ CREATE TABLE IF NOT EXISTS club (
     email VARCHAR(200) NOT NULL,
     encoded_password VARCHAR(200) NOT NULL,
     name VARCHAR(200) NOT NULL,
-    description VARCHAR(500) NOT NULL,
-    meet_time VARCHAR(500) NOT NULL,
+    description VARCHAR(500),
+    meet_time VARCHAR(500),
     profile_picture_url VARCHAR(200)
 );
 

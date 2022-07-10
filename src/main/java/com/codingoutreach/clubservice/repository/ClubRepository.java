@@ -17,7 +17,7 @@ public class ClubRepository {
 
     private final String FIND_CLUB_BY_EMAIL = "SELECT club_id, email, encoded_password FROM club WHERE email=?";
 
-    private final String SAVE_CLUB = "INSERT INTO club VALUES (?, ?, ?, ?, ?, ?)";
+    private final String SAVE_CLUB = "INSERT INTO club VALUES (?, ?, ?, ?, ?, ?, ?)";
     private final JdbcTemplate jdbc;
 
     @Autowired
@@ -30,8 +30,8 @@ public class ClubRepository {
         return jdbc.query(GET_ALL_CLUBS, mapClub());
     }
 
-    public ClubUser findByEmail(String email) {
-        return jdbc.queryForObject(FIND_CLUB_BY_EMAIL, new Object[] {email}, mapLogin());
+    public List<ClubUser> findByEmail(String email) {
+        return jdbc.query(FIND_CLUB_BY_EMAIL, new Object[] {email}, mapLogin());
     }
 
     public int createNewClub(Club club) {
