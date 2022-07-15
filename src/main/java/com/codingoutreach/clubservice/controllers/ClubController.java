@@ -5,6 +5,7 @@ import com.codingoutreach.clubservice.service.ClubService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -26,8 +27,10 @@ public class ClubController {
      * @return All information needed to load Club Profile page for club identified with {@code clubId}
      */
     @GetMapping
-    @RequestMapping(path="/information")
+    @RequestMapping(path="/information/{id}")
     public ClubInformation getClubInformationByClubId(@PathVariable("id") UUID clubId) {
         return clubService.getClubInformationByClubId(clubId);
     }
+
+
 }
