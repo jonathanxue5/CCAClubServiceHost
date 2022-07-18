@@ -1,6 +1,5 @@
 package com.codingoutreach.clubservice.repository;
 
-import com.codingoutreach.clubservice.appuser.AppUser;
 import com.codingoutreach.clubservice.repository.DTO.Club;
 import com.codingoutreach.clubservice.repository.DTO.ClubUser;
 import org.springframework.beans.factory.annotation.Autowired;

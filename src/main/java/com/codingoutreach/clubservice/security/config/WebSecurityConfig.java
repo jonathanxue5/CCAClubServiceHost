@@ -1,8 +1,11 @@
 package com.codingoutreach.clubservice.security.config;
 
 
-import com.codingoutreach.clubservice.service.AppUserService;
+import com.codingoutreach.clubservice.repository.ClubRepository;
+import com.codingoutreach.clubservice.service.ClubUserService;
+import com.codingoutreach.clubservice.service.JWTFilter;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -11,14 +14,31 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+
+import javax.servlet.http.HttpServletResponse;
 @Configuration
 @AllArgsConstructor
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final AppUserService appUserService;
+    private final ClubUserService clubUserService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @Autowired private JWTFilter filter;
+    @Autowired private ClubUserService cus;
+    @Autowired private ClubRepository clubRepo;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -26,24 +46,28 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
         http
                 .csrf().disable()
+                .cors()
+                .and()
                 .authorizeRequests()
-                    .antMatchers("/**") // TODO: Figure out the page club leaders will use to edit their information
+                    .antMatchers("/**")
                     .permitAll()
-                .anyRequest()
-                .authenticated().and()
-                .formLogin(); // TODO: Delete this and replace with JWT
-    }
+                .and()
+                .userDetailsService(cus)
+                .exceptionHandling()
+                .authenticationEntryPoint(
+                        (request, response, authException) ->
+                                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized")
+                )
+                .and()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(daoAuthenticationProvider());
+        http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean
-    public DaoAuthenticationProvider daoAuthenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setPasswordEncoder(bCryptPasswordEncoder);
-        provider.setUserDetailsService(appUserService);
-        return provider;
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 }
