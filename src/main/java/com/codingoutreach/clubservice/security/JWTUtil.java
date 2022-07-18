@@ -18,11 +18,10 @@ public class JWTUtil {
     @Value("${jwt_secret}")
     private String secret;
 
-    public String generateToken(UUID uuid) throws IllegalArgumentException, JWTCreationException {
-        String clubId = uuid.toString();
+    public String generateToken(String email) throws IllegalArgumentException, JWTCreationException {
         return JWT.create()
                 .withSubject("User Details")
-                .withClaim("Club ID", clubId)
+                .withClaim("email", email)
                 .withIssuedAt(new Date())
                 .withIssuer("YOUR APPLICATION/PROJECT/COMPANY NAME")
                 .withExpiresAt(new Date(new Date().getTime() + 24L*60*60*1000))

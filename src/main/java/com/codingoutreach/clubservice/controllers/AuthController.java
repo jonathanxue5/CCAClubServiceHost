@@ -13,10 +13,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
@@ -32,33 +29,36 @@ public class AuthController {
     @Autowired private ClubUserService clubUserService;
     @Autowired private JWTUtil jwtUtil;
     @Autowired private AuthenticationManager authManager;
+    @CrossOrigin
     @PostMapping("/register")
     public Map<String, Object> registerHandler(@RequestBody ClubCreationRequest user){
         Club userClub = clubUserService.signUpUser(user);
-        String token = jwtUtil.generateToken(userClub.getClubID());
+        String token = jwtUtil.generateToken(userClub.getEmail());
         return Collections.singletonMap("jwt-token", token);
     }
 
+    @CrossOrigin
     @PostMapping("/login")
     public Map<String, Object> loginHandler(@RequestBody LoginCredentials body){
         try {
             UsernamePasswordAuthenticationToken authInputToken =
                     new UsernamePasswordAuthenticationToken(body.getEmail(), body.getPassword());
 
-            authManager.authenticate(authInputToken);
+
             List<ClubUser> clubUserList = clubRepository.findByEmail(body.getEmail());
             if (clubUserList.size() == 0) {
+                // Returns email failure
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid Email");
             } else if (clubUserList.size() != 1) {
                 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Too many emails");
             }
-            UUID clubId = clubUserList.get(0).getClubid();
-
-            String token = jwtUtil.generateToken(clubId);
+            authManager.authenticate(authInputToken);
+            String token = jwtUtil.generateToken(clubUserList.get(0).getEmail());
 
             return Collections.singletonMap("jwt-token", token);
         } catch (AuthenticationException authExc){
-            throw new RuntimeException("Invalid Login Credentials");
+            // Returns password failure
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid Password");
         }
     }
 
